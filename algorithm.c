@@ -1399,6 +1399,8 @@ static algorithm_settings_t algos[] = {
 
   { "pascal", ALGO_PASCAL, "", 1, 1, 1, 0, 0, 0xFF, 0xFFFFULL, 0x0000ffffUL, 0, 0, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, pascal_regenhash, pascal_midstate, NULL, queue_pascal_kernel, NULL, NULL },
   { "cryptonight", ALGO_CRYPTONIGHT, "", 1, 0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF, 0xFFFFULL, 0x0000ffffUL, 6, 0, 0, cryptonight_regenhash, NULL, queue_cryptonight_kernel, gen_hash, NULL },
+
+
   { "cryptonight-lite", ALGO_CRYPTONIGHT_LITE, "", (1ULL << 32), (1ULL << 32), (1ULL << 32), 0, 0, 0xFF, 0xFFFFULL, 0x0000ffffUL, 6, 0, 0, cryptonightlite_regenhash, NULL, NULL, queue_cryptonight_kernel, gen_hash, NULL },
   { "skeincoin", ALGO_SKEINCOIN, "", 1, 1, 1, 0, 0, 0xFF, 0xFFFFULL, 0x000000ffUL, 0, 128,              CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, skeincoin_regenhash, NULL, skeincoin_prepare_work, queue_skeincoin_kernel, gen_hash, NULL },
   { "veltor",    ALGO_VELTOR,    "", 1, 1, 1, 0, 0, 0xFF, 0xFFFFULL, 0x0000ffffUL, 3, 8 * 16 * 4194304, 0,                                       veltor_regenhash,    NULL,         NULL, queue_veltor_kernel, gen_hash, append_x11_compiler_options },
@@ -1425,6 +1427,7 @@ static algorithm_settings_t algos[] = {
 #endif 
 
 #if BAIKAL_TYPE & BAIKAL_1751
+ // { "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0, 0, cryptonight_regenhash, NULL, queue_cryptonight_kernel, gen_hash, NULL },
   { "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0,       cryptonight_regenhash,             NULL, NULL, gen_hash },
   { "cryptonight-lite",   ALGO_CRYPTONIGHT_LITE, "", (1ULL << 32), (1ULL << 32), (1ULL << 32), 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,      0,		cryptonightlite_regenhash,         NULL,							NULL, gen_hash },
 #endif
