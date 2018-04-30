@@ -1427,8 +1427,8 @@ static algorithm_settings_t algos[] = {
 #endif 
 
 #if BAIKAL_TYPE & BAIKAL_1751
- // { "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0, 0, cryptonight_regenhash, NULL, queue_cryptonight_kernel, gen_hash, NULL },
-  { "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0,       cryptonight_regenhash,             NULL, NULL, gen_hash },
+  { "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0, 0, cryptonight_regenhash, NULL, queue_cryptonight_kernel, gen_hash, NULL },
+  //{ "cryptonight",        ALGO_CRYPTONIGHT,      "", 1,  0x100010001LLU, 0x100010001LLU, 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,            0,       cryptonight_regenhash,             NULL, NULL, gen_hash },
   { "cryptonight-lite",   ALGO_CRYPTONIGHT_LITE, "", (1ULL << 32), (1ULL << 32), (1ULL << 32), 0, 0, 0xFF,   0xFFFFULL, 0x0000ffffUL,  6,      0,		cryptonightlite_regenhash,         NULL,							NULL, gen_hash },
 #endif
 
