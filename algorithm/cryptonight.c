@@ -32,7 +32,7 @@
   } \
   const uint64_t tweak1_2 = Variant > 0 ? *(uint64_t*)(Input + 35) ^ CNCtx.State[24] : 0
 
-static const uint64_t keccakf_rndc[24] = 
+static const uint64_t keccakf_rndc[24] =
 {
     0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808aULL,
     0x8000000080008000ULL, 0x000000000000808bULL, 0x0000000080000001ULL,
@@ -159,7 +159,6 @@ static inline uint64_t hi_dword(uint64_t val) {
 static inline uint64_t lo_dword(uint64_t val) {
 	return val & 0xFFFFFFFF;
 }
-
 static inline uint64_t mul128(uint64_t multiplier, uint64_t multiplicand, uint64_t* product_hi) {
   // multiplier   = ab = a * 2^32 + b
   // multiplicand = cd = c * 2^32 + d
@@ -237,6 +236,7 @@ void AESExpandKey256(uint32_t *keybuf)
 		keybuf[c] = keybuf[c - 8] ^ ((!(c & 7)) ? ROTL32(t, 24U) ^ ((uint32_t)(CNAESRcon[i++])) : t);
 	}
 }
+
 
 void cryptonight(uint8_t *Output, uint8_t *Input, uint32_t Length, int Variant)
 {
@@ -371,8 +371,6 @@ void cryptonight_regenhash(struct work *work)
 	applog(LOG_DEBUG, "cryptonight_regenhash_var%d: %s", variant, tmpdbg);
 	
 	free(tmpdbg);
-	
-	//memset(ohash, 0x00, 32);
 }
 
 
