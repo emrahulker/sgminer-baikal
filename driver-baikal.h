@@ -46,7 +46,7 @@
 
 #define BAIKAL_CHECK_STALE      (0)
 #define BAIKAL_EN_HWE           (1)
-#define BAIKAL_CLK_FIX          (0)
+#define BAIKAL_CLK_FIX          (1)
 
 struct asic_info {
     uint32_t nonce;

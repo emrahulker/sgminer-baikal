@@ -1145,80 +1145,105 @@ static cl_int queue_decred_kernel(_clState *clState, dev_blk_ctx *blk, __maybe_u
   return status;
 }
 
+
 static cl_int queue_cryptonight_kernel(_clState *clState, dev_blk_ctx *blk, __maybe_unused cl_uint threads)
 {
-	cl_kernel *kernel = &clState->kernel;
-	unsigned int num = 0;
-	cl_int status = 0, tgt32 = *(uint32_t*)(blk->work->target + 28);
-	int variant = monero_variant(blk->work);
-	if (variant != clState->monero_variant) {
-		applog(LOG_NOTICE, "switch to monero variant %d", variant);
-		char kernel_name[20] = "search1";
-		if (variant > 0)
-			 snprintf(kernel_name + 7, sizeof(kernel_name) - 7, "_var%d", variant);
-		clReleaseKernel(clState->extra_kernels[0]);
-		clState->extra_kernels[0] = clCreateKernel(clState->program, kernel_name, &status);
-		if (status != CL_SUCCESS) {
-			applog(LOG_ERR, "Error %d: Creating Kernel \"%s\" from program. (clCreateKernel)", kernel_name, status);
-			return status;
-			
-		}
-		clState->monero_variant = variant;
-	}
+
+      cl_kernel *kernel = &clState->kernel;
+      unsigned int num = 0;
+      cl_int status = 0, tgt32 = *(uint32_t*)(blk->work->target + 28);
+
+      int variant = MIN(1, monero_variant(blk->work)); // limit variant to prevent DOS
+      if (variant != clState->monero_variant) {
+        applog(LOG_NOTICE, "switch to monero variant %d", variant);
+        char kernel_name[20] = "search1";
+        if (variant > 0)
+          snprintf(kernel_name + 7, sizeof(kernel_name) - 7, "_var%d", variant);
+        clReleaseKernel(clState->extra_kernels[0]);
+        clState->extra_kernels[0] = clCreateKernel(clState->program, kernel_name, &status);
+        if (status != CL_SUCCESS) {
+          applog(LOG_ERR, "Error %d: Creating Kernel \"%s\" from program. (clCreateKernel)", kernel_name, status);
+          return status;
+        }
+        clState->monero_variant = variant;
+      }
+
+      memcpy(clState->cldata, blk->work->data, blk->work->XMRBlobLen);
+
+//	cl_kernel *kernel = &clState->kernel;
+//	unsigned int num = 0;
+//	cl_int status = 0, tgt32 = *(uint32_t*)(blk->work->target + 28);
+//	int variant = monero_variant(blk->work);
+//	if (variant != clState->monero_variant) {
+//		applog(LOG_NOTICE, "switch to monero variant %d", variant);
+//		char kernel_name[20] = "search1";
+//		if (variant > 0)
+//			 snprintf(kernel_name + 7, sizeof(kernel_name) - 7, "_var%d", variant);
+//		clReleaseKernel(clState->extra_kernels[0]);
+//		clState->extra_kernels[0] = clCreateKernel(clState->program, kernel_name, &status);
+//		if (status != CL_SUCCESS) {
+//			applog(LOG_ERR, "Error %d: Creating Kernel \"%s\" from program. (clCreateKernel)", kernel_name, status);
+//			return status;
+//
+//		}
+//		clState->monero_variant = variant;
+//	}
+//
+//
+//	memcpy(clState->cldata, blk->work->data, 76);
 
 
-	memcpy(clState->cldata, blk->work->data, 76);
-		
-	status = clEnqueueWriteBuffer(clState->commandQueue, clState->CLbuffer0, CL_FALSE, 0, blk->work->XMRBlobLen, clState->cldata, 0, NULL, NULL);
+	status = clEnqueueWriteBuffer(clState->commandQueue, clState->CLbuffer0, CL_FALSE, 0, blk->work->XMRBlobLen, clState->cldata , 0, NULL, NULL);
 	
 	CL_SET_ARG(clState->CLbuffer0);
-	CL_SET_ARG(clState->Scratchpads);
-	CL_SET_ARG(clState->States);
-	
-	num = 0;
-	kernel = clState->extra_kernels;
-	CL_SET_ARG(clState->Scratchpads);
-	CL_SET_ARG(clState->States);
-	if (variant > 0)
-		CL_SET_ARG(*(cl_uint*)(clState->cldata + 35));
-	
-	num = 0;
-	CL_NEXTKERNEL_SET_ARG(clState->Scratchpads);
-	CL_SET_ARG(clState->States);
-	CL_SET_ARG(clState->BranchBuffer[0]);
-	CL_SET_ARG(clState->BranchBuffer[1]);
-	CL_SET_ARG(clState->BranchBuffer[2]);
-	CL_SET_ARG(clState->BranchBuffer[3]);
-	
-	num = 0;
-	CL_NEXTKERNEL_SET_ARG(clState->States);
-	CL_SET_ARG(clState->BranchBuffer[0]);
-	CL_SET_ARG(clState->outputBuffer);
-	CL_SET_ARG(tgt32);
-	
-	// last to be set in driver-opencl.c
-	
-	num = 0;
-	CL_NEXTKERNEL_SET_ARG(clState->States);
-	CL_SET_ARG(clState->BranchBuffer[1]);
-	CL_SET_ARG(clState->outputBuffer);
-	CL_SET_ARG(tgt32);
-	
-	
-	num = 0;
-	CL_NEXTKERNEL_SET_ARG(clState->States);
-	CL_SET_ARG(clState->BranchBuffer[2]);
-	CL_SET_ARG(clState->outputBuffer);
-	CL_SET_ARG(tgt32);
-	
-	
-	num = 0;
-	CL_NEXTKERNEL_SET_ARG(clState->States);
-	CL_SET_ARG(clState->BranchBuffer[3]);
-	CL_SET_ARG(clState->outputBuffer);
-	CL_SET_ARG(tgt32);
-	
-	return(status);
+    CL_SET_ARG(blk->work->XMRBlobLen);
+    CL_SET_ARG(clState->Scratchpads);
+    CL_SET_ARG(clState->States);
+
+    num = 0;
+    kernel = clState->extra_kernels;
+    CL_SET_ARG(clState->Scratchpads);
+    CL_SET_ARG(clState->States);
+    if (variant > 0)
+    CL_SET_ARG(*(cl_uint*)(clState->cldata + 35));
+
+    num = 0;
+    CL_NEXTKERNEL_SET_ARG(clState->Scratchpads);
+    CL_SET_ARG(clState->States);
+    CL_SET_ARG(clState->BranchBuffer[0]);
+    CL_SET_ARG(clState->BranchBuffer[1]);
+    CL_SET_ARG(clState->BranchBuffer[2]);
+    CL_SET_ARG(clState->BranchBuffer[3]);
+
+    num = 0;
+    CL_NEXTKERNEL_SET_ARG(clState->States);
+    CL_SET_ARG(clState->BranchBuffer[0]);
+    CL_SET_ARG(clState->outputBuffer);
+    CL_SET_ARG(tgt32);
+
+    // last to be set in driver-opencl.c
+
+    num = 0;
+    CL_NEXTKERNEL_SET_ARG(clState->States);
+    CL_SET_ARG(clState->BranchBuffer[1]);
+    CL_SET_ARG(clState->outputBuffer);
+    CL_SET_ARG(tgt32);
+
+
+    num = 0;
+    CL_NEXTKERNEL_SET_ARG(clState->States);
+    CL_SET_ARG(clState->BranchBuffer[2]);
+    CL_SET_ARG(clState->outputBuffer);
+    CL_SET_ARG(tgt32);
+
+
+    num = 0;
+    CL_NEXTKERNEL_SET_ARG(clState->States);
+    CL_SET_ARG(clState->BranchBuffer[3]);
+    CL_SET_ARG(clState->outputBuffer);
+    CL_SET_ARG(tgt32);
+
+    return(status);
 }
 
 static cl_int queue_lbry_kernel(struct __clState *clState, struct _dev_blk_ctx *blk, __maybe_unused cl_uint threads)
