@@ -7,7 +7,7 @@
 #define BAIKAL_1772             (0x2)
 #define BAIKAL_1791             (0x4)
 #define BAIKAL_ALL              (0x7)
-#define BAIKAL_TYPE             (BAIKAL_ALL)
+#define BAIKAL_TYPE             (0x1)
 
 #define BAIKAL_MAXMINERS	    (5)
 #define BAIKAL_MAXUNIT          (4)
